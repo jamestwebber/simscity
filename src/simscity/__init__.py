@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from simscity import batch, drug, latent, sequencing, util
+from simscity import batch, drug, latent, sequencing, util  # noqa: F401
 
 __version__ = "0.1.0"
 
