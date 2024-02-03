@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-import warnings
-
 import numpy as np
-import scipy.sparse as sp
 import scipy.stats as st
+import sparse
 
 
 def library_size(
@@ -47,10 +45,9 @@ def fragment_genes(n_genes: int, lam: float = 1.0) -> np.ndarray:
 
 
 def umi_counts(
-    raw_expression: np.ndarray,
+    raw_expression: np.ndarray | sparse.GCXS,
     lib_size: int | np.ndarray[int] = None,
     fragments_per_gene: int | np.ndarray[int] = 1,
-    sparse: bool = False,
 ) -> np.ndarray:
     """Given an ``(..., n_genes)`` array of expression values, generates a count matrix
     of UMIs based by multinomial sampling. The last dimension of the array defines
@@ -61,19 +58,15 @@ def umi_counts(
     :param lib_size: library size for each cell, either constant or per-sample.
                      If None, generates a distribution using ``library_size``
     :param fragments_per_gene: fragments observed per gene, either constant or per-gene
-    :param sparse: if True, return a sparse (CSR) matrix. If ``raw_expression`` is >2-d,
-                   the output matrix will be reshaped to 2-d
     :return: integer array of shape ``(..., n_features)`` containing umi counts
     """
+    is_sparse = isinstance(raw_expression, sparse.GCXS)
 
     if np.any(raw_expression < 0):
         raise ValueError("raw_expression must be non-negative")
 
     if len(raw_expression.shape) == 1:
         raise ValueError("raw_expression should be >= 2 dimensions")
-
-    if sparse and len(raw_expression.shape) > 2:
-        warnings.warn("Reshaping output to 2 dimensions for sparse matrix")
 
     n_cells = raw_expression.shape[:-1]
     n_genes = raw_expression.shape[-1]
@@ -90,12 +83,16 @@ def umi_counts(
 
     gene_p = fragment_expression / fragment_expression.sum(-1, keepdims=True)
 
-    if sparse:
-        cell_gene_umis = sp.vstack(
-            [
-                sp.csr_matrix(np.random.multinomial(n=lib_size[i], pvals=gene_p[i]))
-                for i in np.ndindex(*n_cells)
-            ]
+    if is_sparse:
+        cell_gene_umis = (
+            sparse.concatenate(
+                [
+                    sparse.GCXS(np.random.multinomial(n=lib_size[i], pvals=gene_p[i]))
+                    for i in np.ndindex(*n_cells)
+                ]
+            )
+            .reshape(n_cells + (-1,))
+            .asformat("gcxs", compressed_axes=(0,))
         )
     else:
         cell_gene_umis = np.vstack(
@@ -109,7 +106,7 @@ def umi_counts(
 
 
 def pcr_noise(
-    read_counts: np.ndarray,
+    read_counts: np.ndarray | sparse.GCXS,
     pcr_betas: float | np.ndarray[float],
     n_cycles: int,
     copy: bool = True,
@@ -128,12 +125,14 @@ def pcr_noise(
     if np.any(pcr_betas < 0):
         raise ValueError("pcr_betas must be non-negative")
 
+    is_sparse = isinstance(read_counts, sparse.GCXS)
+
     if copy:
         read_counts = read_counts.copy()
 
     pcr_betas = np.broadcast_to(pcr_betas, (1, read_counts.shape[1]))
 
-    if sp.issparse(read_counts):
+    if is_sparse:
         d = read_counts.data[None, :]
         pcr_betas = pcr_betas[:, read_counts.nonzero()[1]]
     else:
@@ -143,7 +142,7 @@ def pcr_noise(
     for i in range(n_cycles):
         d += np.random.binomial(n=d, p=pcr_betas, size=d.shape)
 
-    if sp.issparse(read_counts):
+    if is_sparse:
         read_counts.data = d.flatten()
 
     return read_counts

@@ -4,10 +4,14 @@
 import warnings
 
 import numpy as np
+import sparse
 
 
 def arrays_to_anndata(
-    expression: np.ndarray, batch: np.ndarray, classes=np.ndarray, **obsm: np.ndarray
+    expression: np.ndarray | sparse.GCXS,
+    batch: np.ndarray,
+    classes=np.ndarray,
+    **obsm: np.ndarray,
 ):
     """Packages together an AnnData object for use in existing pipelines
 
