@@ -1,17 +1,28 @@
-[tool.black]
-line-length = 88
-py36 = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[build-system]
+requires = ["setuptools >= 61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simscity"
+description = "A library to simulate single-cell data"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+dependencies = ["numpy", "scipy", "sparse"]
+optional-dependencies = { anndata = ["anndata"], dev = ["pre-commit", "ruff"] }
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "simscity.__version__"}
+
+[tool.ruff]
+src = ["src"]
+select = ["E", "F", "I", "A"]
+ignore = ["E501"]

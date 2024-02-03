@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Union
+import warnings
 
 import numpy as np
 import scipy.sparse as sp
 import scipy.stats as st
-
-import warnings
 
 
 def library_size(
@@ -50,8 +48,8 @@ def fragment_genes(n_genes: int, lam: float = 1.0) -> np.ndarray:
 
 def umi_counts(
     raw_expression: np.ndarray,
-    lib_size: Union[int, np.ndarray] = None,
-    fragments_per_gene: Union[int, np.ndarray] = 1,
+    lib_size: int | np.ndarray[int] = None,
+    fragments_per_gene: int | np.ndarray[int] = 1,
     sparse: bool = False,
 ) -> np.ndarray:
     """Given an ``(..., n_genes)`` array of expression values, generates a count matrix
@@ -112,7 +110,7 @@ def umi_counts(
 
 def pcr_noise(
     read_counts: np.ndarray,
-    pcr_betas: Union[float, np.ndarray],
+    pcr_betas: float | np.ndarray[float],
     n_cycles: int,
     copy: bool = True,
 ) -> np.ndarray:

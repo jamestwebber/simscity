@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Union
-
 import numpy as np
 import scipy.special as ssp
 
 import simscity.latent
 
 
-def projection(n_latent: int, sparsity: float, scale: Union[int, float]) -> np.ndarray:
+def projection(n_latent: int, sparsity: float, scale: int | float) -> np.ndarray:
     """Generates a linear weighting from a latent space to feature space,
     potentially with some coefficients set to zero. Returns the weighting.
 
@@ -29,7 +27,7 @@ def projection(n_latent: int, sparsity: float, scale: Union[int, float]) -> np.n
     return z_weights
 
 
-def doses(scale: Union[int, float], n_conditions: int) -> np.ndarray:
+def doses(scale: int | float, n_conditions: int) -> np.ndarray:
     """
     Generates an array of uniformly-spaced values with a bit of random noise
     added in.
@@ -41,7 +39,7 @@ def doses(scale: Union[int, float], n_conditions: int) -> np.ndarray:
 
     dose_thresholds = np.linspace(
         -3 * scale, 3 * scale, n_conditions
-    ) + np.random.normal(size=n_conditions, scale=1.0 / (n_conditions ** 2))
+    ) + np.random.normal(size=n_conditions, scale=1.0 / (n_conditions**2))
 
     return dose_thresholds
 

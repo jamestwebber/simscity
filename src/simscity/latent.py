@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Callable, Tuple, Union
+import warnings
+from typing import Callable, Tuple
 
 import numpy as np
-
-import warnings
 
 
 def gen_weighting(
@@ -24,7 +23,7 @@ def gen_weighting(
     :return: array of shape (n_rows, n_cols)
     """
     if np.any(sparsity <= 0) or np.any(sparsity > 1):
-        raise ValueError(f"Sparsity should be in the interval (0, 1]")
+        raise ValueError("Sparsity should be in the interval (0, 1]")
 
     # fmt: off
     weights = (
@@ -44,8 +43,8 @@ def gen_weighting(
 def gen_programs(
     n_latent: int,
     n_features: int,
-    sparsity: Union[float, np.ndarray],
-    scale: Union[float, np.ndarray],
+    sparsity: float | np.ndarray[float],
+    scale: float | np.ndarray[float],
 ) -> np.ndarray:
     """Generate different "programs", each of which consists of a weighting
     across the n_features of the biological space.
@@ -72,8 +71,8 @@ def gen_programs(
 def gen_classes(
     n_latent: int,
     n_classes: int,
-    sparsity: Union[float, np.ndarray],
-    scale: Union[float, np.ndarray],
+    sparsity: float | np.ndarray[float],
+    scale: float | np.ndarray[float],
 ) -> np.ndarray:
     """Generates the *program weights* for n_classes in a latent space. Each
     class is made up of a random selection of the available programs based on
@@ -128,8 +127,8 @@ def sample_classes(
     n_samples: int,
     classes: np.ndarray,
     proportions: np.ndarray = None,
-    cells_per_class: Union[int, np.ndarray] = None,
-    program_cov: Union[np.ndarray, Callable] = None,
+    cells_per_class: int | np.ndarray = None,
+    program_cov: np.ndarray | Callable = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Given the class weightings on the latent space and a number of cells,
     produce a sample of cells based on the given class proportions. Cells have

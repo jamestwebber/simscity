@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Union
+import warnings
 
 import numpy as np
-
-import warnings
 
 
 def arrays_to_anndata(
@@ -20,8 +18,8 @@ def arrays_to_anndata(
     :return: AnnData object containing the given data and metadata
     """
     try:
-        import pandas as pd
         import anndata
+        import pandas as pd
     except ImportError:
         warnings.warn("arrays_to_anndata requires anndata")
         raise

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Union
-
 import numpy as np
 
 
@@ -10,8 +8,8 @@ def gen_batch_vectors(
     n_batches: int,
     n_features: int,
     batch_scale: float,
-    bio_batch_angle: Union[float, None] = None,
-    projection_to_bio: Union[np.ndarray, None] = None,
+    bio_batch_angle: float | None = None,
+    projection_to_bio: np.ndarray | None = None,
 ) -> np.ndarray:
     """Generates a batch-effect vector for each batch, optionally with some
     relation to the biological space
@@ -24,7 +22,8 @@ def gen_batch_vectors(
     :return: array of shape (n_batches, n_features)
     """
 
-    norm = lambda X: np.linalg.norm(X, axis=1, keepdims=True)
+    def norm(X):
+        return np.linalg.norm(X, axis=1, keepdims=True)
 
     batch_vectors = np.random.randn(n_batches, n_features)
     batch_vectors = (
@@ -46,9 +45,9 @@ def gen_batch_vectors(
 def add_batch_vectors(
     expression: np.ndarray,
     batch: np.ndarray,
-    batch_scale: Union[int, float],
-    bio_batch_angle: Union[float, None],
-    projection_to_bio: Union[np.ndarray, None],
+    batch_scale: int | float,
+    bio_batch_angle: float | None,
+    projection_to_bio: np.ndarray | None,
     copy: bool = True,
 ) -> np.ndarray:
     """Generate batch-effect vectors and apply them to the expression data

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from typing import Union
-
 import numpy as np
 
 from simscity import batch, drug, latent, sequencing, util
+
+__version__ = "0.1.0"
 
 
 def mnn_synthetic_data(
@@ -16,17 +16,17 @@ def mnn_synthetic_data(
     n_classes: int = 3,
     proportions: np.ndarray = None,
     sparsity: float = 1.0,
-    scale: Union[int, float] = 5,
+    scale: int | float = 5,
     batch_scale: float = 0.1,
-    bio_batch_angle: Union[float, None] = None,
+    bio_batch_angle: float | None = None,
     seed: int = 2018,
 ):
-    """	
+    """
     :param n_samples: number of samples (cells) per batch
-    :param n_features: number of features (genes)	
-    :param n_batches: number of batches	
-    :param n_latent: size of the latent space used to generate data	
-    :param n_classes: number of classes shared across batches	
+    :param n_features: number of features (genes)
+    :param n_batches: number of batches
+    :param n_latent: size of the latent space used to generate data
+    :param n_classes: number of classes shared across batches
     :param proportions: proportion of cells from each class in each batch. If
                         shape is (n_classes,) same proportions used each time.
                         If shape is (n_batches, n_classes) then each row is a

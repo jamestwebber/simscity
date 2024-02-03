@@ -2,9 +2,9 @@ name: simscity
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - altair
+  - anndata
   - ipykernel
   - numpy
   - pip
@@ -12,5 +12,3 @@ dependencies:
   - scikit-learn
   - scipy
   - umap-learn
-  - pip:
-    - anndata
